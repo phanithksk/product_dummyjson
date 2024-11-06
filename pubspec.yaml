@@ -39,6 +39,7 @@ dependencies:
   get: ^4.6.6
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
+  get_storage: ^2.1.1
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +90,9 @@ flutter:
     - family: ROBOTO-REGULAR
       fonts:
       - asset: assets/fonts/Roboto-Regular.ttf
+    - family: KH-BOLD
+      fonts:
+      - asset: assets/fonts/KHMEROSBATTAMBANG-BOLD.TTF
 
   #
   # For details regarding fonts from package dependencies,

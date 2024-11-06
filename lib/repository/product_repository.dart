@@ -9,10 +9,10 @@ class ProductRepository {
   //! Get Products
   Future<ProductModel> getAllProducts({
     required int limit,
-    required int page,
+    int? skip,
   }) async {
     var res = ProductModel();
-    String url = '${Api().productUrl}?limit=$limit&skip=$page';
+    String url = '${Api().productUrl}?limit=$limit&skip=$skip';
     var response = await api.getApi(url);
 
     res = ProductModel.fromJson(response);

@@ -1,12 +1,13 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:produce_api/controller/product_controller.dart';
 import 'package:produce_api/repository/product_repository.dart';
+import 'package:produce_api/screen/auth/login_screen.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../controller/change_lang_controller.dart';
 import '../widget/custom_card_product.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class ProductsScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<ProductsScreen> {
   final controller = Get.put(ProductController(ProductRepository()));
-
+  final langController = Get.put(ChangeLanguageController());
   ScrollController scrollController = ScrollController();
 
   @override
@@ -39,6 +40,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
           _isLoadingMore.value = true;
         });
         await Future.delayed(const Duration(milliseconds: 100));
+        debugPrint("----selectCategory:${controller.selectCategory.value}");
+        // controller.selectCategory.value != 0
+        //     ? await controller.getPaginationByCategory()
+        //     :
         await controller.getAllProductData();
         await Future.delayed(const Duration(milliseconds: 300));
         setState(() {
@@ -61,13 +66,35 @@ class _ProductsScreenState extends State<ProductsScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xff5D44AD),
         centerTitle: true,
-        title: const Text(
-          "Product App",
-          style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'ROBOTO-BOLD',
-            color: Colors.white,
-          ),
+        title: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SigninScreen()),
+                );
+              },
+              child: const Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              "product".tr,
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: Get.locale == const Locale('km', 'KM')
+                    ? 'KH-BOLD'
+                    : 'ROBOTO-BOLD',
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(
+              width: 50,
+            )
+          ],
         ),
         actions: [
           Obx(
@@ -84,7 +111,27 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 ),
               ),
             ),
-          )
+          ),
+          GestureDetector(
+            onTap: () {
+              if (Get.locale == const Locale('km', 'KM')) {
+                langController.updateLanguage('English');
+              } else {
+                langController.updateLanguage('Khmer');
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: CircleAvatar(
+                radius: 13,
+                backgroundImage: AssetImage(
+                  Get.locale == const Locale('km', 'KM')
+                      ? 'assets/kh.png'
+                      : 'assets/en.png',
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -163,16 +210,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 const SizedBox(
                   height: 5,
                 ),
-                // controller.isLoading.value
-                //     ? const Flexible(
-                //         child: Center(
-                //           child: CupertinoActivityIndicator(
-                //             color: Colors.black,
-                //             animating: true,
-                //           ),
-                //         ),
-                //       )
-                //     :
                 controller.isGrid.value == false
                     ? Flexible(
                         child: Stack(
@@ -217,10 +254,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         ),
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 5,
-                                          vertical: 6,
+                                          vertical: 7,
                                         ),
                                         margin: const EdgeInsets.symmetric(
-                                          horizontal: 140,
+                                          horizontal: 130,
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
@@ -229,7 +266,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                             Platform.isAndroid
                                                 ? SizedBox(
                                                     height: Get.height * 0.02,
-                                                    width: Get.height * 0.02,
+                                                    width: Get.height * 0.021,
                                                     child:
                                                         const CircularProgressIndicator(
                                                       color: Colors.white,

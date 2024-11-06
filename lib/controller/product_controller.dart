@@ -10,8 +10,8 @@ class ProductController extends GetxController {
   final ProductRepository productRepository;
   final RxBool isGrid = false.obs;
   final hasMoreData = true.obs;
-  int currentPage = 1;
-  final int limit = 5;
+  int currentPage = 0;
+  int limit = 5;
   ProductController(this.productRepository);
 
   @override
@@ -29,7 +29,30 @@ class ProductController extends GetxController {
     try {
       var obj = await productRepository.getAllProducts(
         limit: limit,
-        page: currentPage,
+        skip: currentPage * limit,
+      );
+      if (obj.products != null && obj.products!.isNotEmpty) {
+        productList.addAll(obj.products!);
+        currentPage++;
+      } else {
+        hasMoreData.value = false;
+      }
+    } catch (e) {
+      debugPrint('------Error fetching products: $e');
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> getPaginationByCate() async {
+    if (isLoading.value || !hasMoreData.value) {
+      return;
+    }
+    isLoading(true);
+    try {
+      var obj = await productRepository.getAllProducts(
+        limit: limit,
+        skip: currentPage,
       );
       if (obj.products != null && obj.products!.isNotEmpty) {
         productList.addAll(obj.products!);
@@ -72,7 +95,7 @@ class ProductController extends GetxController {
       if (slug == "all") {
         obj = await productRepository.getAllProducts(
           limit: limit,
-          page: currentPage,
+          skip: currentPage,
         );
       } else {
         obj = await productRepository.getProductsBySlug(slug);
@@ -93,8 +116,6 @@ class ProductController extends GetxController {
       String selectedSlug = categoryList[selectCategory.value].slug ?? "all";
 
       await getAllProductBySlug(selectedSlug);
-    } else {
-      await getCategoryData();
     }
   }
 

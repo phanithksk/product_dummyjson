@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:produce_api/controller/product_controller.dart';
 import 'package:produce_api/repository/product_repository.dart';
-import 'package:produce_api/screen/auth/login_screen.dart';
+import 'package:produce_api/screen/auth/profile_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../controller/change_lang_controller.dart';
 import '../widget/custom_card_product.dart';
@@ -72,7 +72,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SigninScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
                 );
               },
               child: const Icon(

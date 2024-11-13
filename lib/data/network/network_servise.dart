@@ -59,4 +59,39 @@ class NetworkServise implements ApiServise {
     }
     return jsonResponse;
   }
+
+  @override
+  Future<dynamic> postLoginApi(String url,
+      {required Map<String, dynamic> requestBody}) async {
+    dynamic jsonResponse;
+    try {
+      var response = await http
+          .post(
+            Uri.parse(url),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode(requestBody),
+          )
+          .timeout(const Duration(milliseconds: 500));
+
+      switch (response.statusCode) {
+        case 200:
+          jsonResponse = jsonDecode(response.body);
+          break;
+        case 401:
+          InternalSeverExeption("PhoneNumber and Password is Incorrect.");
+          break;
+        case 500:
+          InternalSeverExeption("Server not responding");
+        default:
+          throw Exception("Failed to load data: ${response.statusCode}");
+      }
+    } on SocketException {
+      throw NoInternetExeption("NoInternetConnection");
+    } on TimeoutException {
+      throw TimeoutException("Request timed out");
+    } catch (e) {
+      debugPrint("---Error: $e");
+    }
+    return jsonResponse;
+  }
 }

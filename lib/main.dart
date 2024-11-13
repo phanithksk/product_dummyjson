@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:produce_api/core/app_lang.dart';
-import 'package:produce_api/screen/products/product_screen.dart';
+import 'package:produce_api/routes.dart';
 
 void main() async {
   await GetStorage.init();
-  runApp(const MyApp());
+  runApp(
+    const GlobalLoaderOverlay(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +24,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       translations: AppTranslations(),
       fallbackLocale: AppTranslations().fallbackLocale,
+      initialRoute: '/splash',
+      getPages: appRoute,
       locale: storage.read('langCode') != null
           ? Locale(storage.read('langCode'), storage.read('countryCode'))
           : const Locale('km', 'KM'),
@@ -29,7 +36,6 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: const ProductsScreen(),
     );
   }
 }
